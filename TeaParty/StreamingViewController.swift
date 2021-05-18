@@ -34,19 +34,70 @@ import OpenTok
 import Foundation
 
 final class StreamingViewController: UIViewController {
-  private let apiKey = ""
-  private let sessionId = ""
+  private let apiKey = "47232544"
+  private let sessionId = "2_MX40NzIzMjU0NH5-MTYyMTM1MDA1OTEyMn53b0dWM0w0ZVdJRlJzajN6b01UODJRUTh-fg"
   // swiftlint:disable:next line_length
-  private let token = ""
+  private let token = "T1==cGFydG5lcl9pZD00NzIzMjU0NCZzaWc9MzExY2UwMmM2YTJhMmU2OTQ2ZGU2Mzg0ZDhhM2YyNGI0MjFmNmUxYzpzZXNzaW9uX2lkPTJfTVg0ME56SXpNalUwTkg1LU1UWXlNVE0xTURBMU9URXlNbjUzYjBkV00wdzBaVmRKUmxKemFqTjZiMDFVT0RKUlVUaC1mZyZjcmVhdGVfdGltZT0xNjIxMzUyMTE4Jm5vbmNlPTAuNTQ2MzcwNzgzOTMwODE4MyZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNjIzOTQ0MTE3JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9"
+  
+  private var session: OTSession?
+  
   @IBOutlet private var leaveButton: UIButton!
 
   override func viewDidLoad() {
     super.viewDidLoad()
     leaveButton.layer.cornerRadius = leaveButton.frame.size.height / 2
     navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    
+    connectToSession()
   }
 
   @IBAction private func leave() {
     navigationController?.popViewController(animated: true)
+  }
+  
+  private func connectToSession() {
+    // 1
+    session = OTSession(
+      apiKey: apiKey,
+      sessionId: sessionId,
+      delegate: self
+    )
+
+    // 2
+    var error: OTError?
+    session?.connect(withToken: token, error: &error)
+
+    // 3
+    if let error = error {
+      print("An error occurred connecting to the session", error)
+    }
+  }
+}
+
+// MARK: - OTSessionDelegate
+extension StreamingViewController: OTSessionDelegate {
+  // 1
+  func sessionDidConnect(_ session: OTSession) {
+    print("The client connected to the session.")
+  }
+
+  // 2
+  func sessionDidDisconnect(_ session: OTSession) {
+    print("The client disconnected from the session.")
+  }
+
+  // 3
+  func session(_ session: OTSession, didFailWithError error: OTError) {
+    print("The client failed to connect to the session: \(error).")
+  }
+
+  // 4
+  func session(_ session: OTSession, streamCreated stream: OTStream) {
+    print("A stream was created in the session.")
+  }
+
+  // 5
+  func session(_ session: OTSession, streamDestroyed stream: OTStream) {
+    print("A stream was destroyed in the session.")
   }
 }

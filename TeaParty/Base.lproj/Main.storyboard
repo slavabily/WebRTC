@@ -72,7 +72,7 @@
                                                 <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </state>
                                             <connections>
-                                                <segue destination="4oh-7G-Qx4" kind="show" id="bhk-5u-LQI"/>
+                                                <segue destination="4oh-7G-Qx4" kind="show" id="SQp-No-kw1"/>
                                             </connections>
                                         </button>
                                     </subviews>
