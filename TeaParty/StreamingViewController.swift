@@ -54,7 +54,14 @@ final class StreamingViewController: UIViewController {
   }
 
   @IBAction private func leave() {
-    navigationController?.popViewController(animated: true)
+    var error: OTError?
+    session?.disconnect(&error)
+
+    if let error = error {
+      print("An error occurred disconnecting from the session", error)
+    } else {
+      navigationController?.popViewController(animated: true)
+    }
   }
   
   private func connectToSession() {
@@ -168,5 +175,7 @@ extension StreamingViewController: OTSessionDelegate {
   // 5
   func session(_ session: OTSession, streamDestroyed stream: OTStream) {
     print("A stream was destroyed in the session.")
+    
+    subscriberView?.removeFromSuperview()
   }
 }
