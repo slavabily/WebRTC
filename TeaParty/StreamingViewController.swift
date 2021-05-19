@@ -72,6 +72,42 @@ final class StreamingViewController: UIViewController {
       print("An error occurred connecting to the session", error)
     }
   }
+  
+  private func publishCamera() {
+    // 1
+    guard let publisher = OTPublisher(delegate: nil) else {
+      return
+    }
+
+    // 2
+    var error: OTError?
+    session?.publish(publisher, error: &error)
+
+    // 3
+    if let error = error {
+      print("An error occurred when trying to publish", error)
+      return
+    }
+
+    // 4
+    guard let publisherView = publisher.view else {
+      return
+    }
+
+    // 5
+    let screenBounds = UIScreen.main.bounds
+    let viewWidth: CGFloat = 150
+    let viewHeight: CGFloat = 267
+    let margin: CGFloat = 20
+
+    publisherView.frame = CGRect(
+      x: screenBounds.width - viewWidth - margin,
+      y: screenBounds.height - viewHeight - margin,
+      width: viewWidth,
+      height: viewHeight
+    )
+    view.addSubview(publisherView)
+  }
 }
 
 // MARK: - OTSessionDelegate
@@ -79,6 +115,8 @@ extension StreamingViewController: OTSessionDelegate {
   // 1
   func sessionDidConnect(_ session: OTSession) {
     print("The client connected to the session.")
+    
+    publishCamera()
   }
 
   // 2
