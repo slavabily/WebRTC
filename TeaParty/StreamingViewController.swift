@@ -39,6 +39,8 @@ final class StreamingViewController: UIViewController {
   // swiftlint:disable:next line_length
   private let token = "T1==cGFydG5lcl9pZD00NzIzMjU0NCZzaWc9MzExY2UwMmM2YTJhMmU2OTQ2ZGU2Mzg0ZDhhM2YyNGI0MjFmNmUxYzpzZXNzaW9uX2lkPTJfTVg0ME56SXpNalUwTkg1LU1UWXlNVE0xTURBMU9URXlNbjUzYjBkV00wdzBaVmRKUmxKemFqTjZiMDFVT0RKUlVUaC1mZyZjcmVhdGVfdGltZT0xNjIxMzUyMTE4Jm5vbmNlPTAuNTQ2MzcwNzgzOTMwODE4MyZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNjIzOTQ0MTE3JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9"
   
+  private var subscriberView: UIView?
+  
   private var session: OTSession?
   
   @IBOutlet private var leaveButton: UIButton!
@@ -108,6 +110,33 @@ final class StreamingViewController: UIViewController {
     )
     view.addSubview(publisherView)
   }
+  
+  private func subscribe(to stream: OTStream) {
+    // 1
+    guard let subscriber = OTSubscriber(stream: stream, delegate: nil) else {
+      return
+    }
+
+    // 2
+    var error: OTError?
+    session?.subscribe(subscriber, error: &error)
+
+    // 3
+    if let error = error {
+      print("An error occurred when subscribing to the stream", error)
+      return
+    }
+
+    // 4
+    guard let subscriberView = subscriber.view else {
+      return
+    }
+
+    // 5
+    self.subscriberView = subscriberView
+    subscriberView.frame = UIScreen.main.bounds
+    view.insertSubview(subscriberView, at: 0)
+  }
 }
 
 // MARK: - OTSessionDelegate
@@ -132,6 +161,8 @@ extension StreamingViewController: OTSessionDelegate {
   // 4
   func session(_ session: OTSession, streamCreated stream: OTStream) {
     print("A stream was created in the session.")
+    
+    subscribe(to: stream)
   }
 
   // 5
